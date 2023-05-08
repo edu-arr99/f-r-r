@@ -1,12 +1,15 @@
 from flask import Flask
 from flask import request, jsonify
 import logging
+from flask_cors import CORS
+import bcrypt
 # Here is a missing import ? Are we missing some hashing library ???
 
 app = Flask(__name__)
+CORS(app)
 
-secretPass = "abcd";
-API_KEY_VAL = "12345";
+secretPass = "abcd"
+API_KEY_VAL = "12345"
 
 @app.route('/external-api', methods=['POST'])
 def happy():
@@ -15,7 +18,7 @@ def happy():
         return jsonify(error="request body cannot be empty"), 400
     #print(data)
     api_key_val = data["api_key"]
-    if api_key_val != API_KEY_VAL:
+    if not bcrypt.checkpw(API_KEY_VAL.encode('utf-8'), api_key_val.encode('utf-8')):
         return jsonify(result="You are not welcome Here !!")
     return jsonify(result="Im your father Luke !")
 
